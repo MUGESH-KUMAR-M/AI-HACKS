@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, Trophy, BookOpen, Users, Rocket, Award, CheckCircle, Star, Zap, Brain, Target, Send, Lightbulb, TrendingUp, Clock, Globe, FileText, UserCheck, DollarSign, Upload, X } from 'lucide-react';
+import { Sparkles, Trophy, BookOpen, Users, Rocket, Award, CheckCircle, Star, Zap, Brain, Target, Send, Lightbulb, TrendingUp, Clock, Globe, FileText, UserCheck, DollarSign, X } from 'lucide-react';
 import CircularText from '@/components/CircularText';
 import CountTimer from '@/components/CountTimer';
 
@@ -9,22 +9,20 @@ export default function AIHacksLanding() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
+  // Removed pitchDeck from the form state
   const [formData, setFormData] = useState({
     teamName: '',
     leaderName: '',
     phone: '',
     members: '',
     agree: false,
-    pitchDeck: null as File | null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [showObjWins, setShowObjWins] = useState(false);
-  const [fileName, setFileName] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
@@ -35,43 +33,7 @@ export default function AIHacksLanding() {
     }));
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const file = e.target.files?.[0];
-    if (file) {
-      // Check file size (100MB = 104857600 bytes)
-      if (file.size > 104857600) {
-        setError('File size must be less than 100MB');
-        return;
-      }
-      
-      // Check file type
-      const allowedTypes = [
-        'application/pdf',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-      ];
-      
-      if (!allowedTypes.includes(file.type)) {
-        setError('Only PDF and PPT files are allowed');
-        return;
-      }
-      
-      setFileName(file.name);
-      setFormData((prev) => ({
-        ...prev,
-        pitchDeck: file,
-      }));
-      setError('');
-    }
-  };
-
-  const removeFile = (): void => {
-    setFileName('');
-    setFormData((prev) => ({
-      ...prev,
-      pitchDeck: null,
-    }));
-  };
+  // Removed handleFileChange and removeFile functions
 
   interface RegistrationFormValues {
     teamName: string;
@@ -86,13 +48,9 @@ export default function AIHacksLanding() {
     setIsSubmitting(true);
     setError('');
 
-    if (!formData.pitchDeck) {
-      setError('Please upload your pitch deck');
-      setIsSubmitting(false);
-      return;
-    }
+    // Removed the check for formData.pitchDeck
 
-    const data = formData as RegistrationFormValues & { pitchDeck: File | null };
+    const data = formData as RegistrationFormValues;
 
     const googleFormData = new FormData();
     googleFormData.append('entry.2092238618', data.teamName);
@@ -115,8 +73,8 @@ export default function AIHacksLanding() {
       setTimeout(() => {
         setShowForm(false);
         setSubmitted(false);
-        setFormData({ teamName: '', leaderName: '', phone: '', members: '', agree: false, pitchDeck: null });
-        setFileName('');
+        // Removed pitchDeck from the reset logic
+        setFormData({ teamName: '', leaderName: '', phone: '', members: '', agree: false });
       }, 4000);
     } catch (err) {
       console.error(err);
@@ -647,7 +605,7 @@ export default function AIHacksLanding() {
                 <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                   <div className="p-6 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-2xl border border-purple-500/30">
                     <DollarSign className="w-10 h-10 mx-auto mb-3 text-green-400" />
-                    <p className="text-lg font-bold text-white mb-2">Paid Internships</p>
+                    <p className="text-lg font-bold text-white mb-2">Free Internships</p>
                     <p className="text-gray-300">Real-world projects with competitive compensation</p>
                   </div>
                   <div className="p-6 bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-2xl border border-orange-500/30">
@@ -1001,51 +959,7 @@ export default function AIHacksLanding() {
                       />
                     </div>
 
-                    {/* File Upload Section */}
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-300 mb-2">
-                        Upload Your Pitch Deck (PDF or PPT, Max 100MB) *
-                      </label>
-                      
-                      {!fileName ? (
-                        <div className="relative">
-                          <input
-                            type="file"
-                            accept=".pdf,.ppt,.pptx"
-                            onChange={handleFileChange}
-                            className="hidden"
-                            id="pitchDeckUpload"
-                          />
-                          <label
-                            htmlFor="pitchDeckUpload"
-                            className="flex items-center justify-center gap-3 w-full p-6 bg-gray-800/50 border-2 border-dashed border-gray-700 rounded-xl hover:border-cyan-500 hover:bg-gray-800/70 transition-all cursor-pointer group"
-                          >
-                            <Upload className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />
-                            <span className="text-gray-300 group-hover:text-cyan-400 transition-colors">
-                              Click to upload your pitch deck
-                            </span>
-                          </label>
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-between p-4 bg-green-900/20 border-2 border-green-500/30 rounded-xl">
-                          <div className="flex items-center gap-3 flex-1 min-w-0">
-                            <FileText className="w-6 h-6 text-green-400 flex-shrink-0" />
-                            <span className="text-green-400 font-semibold truncate">{fileName}</span>
-                          </div>
-                          <button
-                            type="button"
-                            onClick={removeFile}
-                            className="ml-2 p-2 hover:bg-red-500/20 rounded-lg transition-colors flex-shrink-0"
-                          >
-                            <X className="w-5 h-5 text-red-400" />
-                          </button>
-                        </div>
-                      )}
-
-                      <p className="text-xs text-gray-400 mt-2">
-                        Must include: Problem, Solution, Market Gap, Revenue Strategy, Target Customers
-                      </p>
-                    </div>
+                    {/* File Upload Section has been removed */}
 
                     <div className="flex items-start gap-3">
                       <input
@@ -1064,8 +978,8 @@ export default function AIHacksLanding() {
 
                     <button
                       onClick={handleSubmit}
-                      // ...code continues from the disabled prop of the button
-                      disabled={isSubmitting || !formData.pitchDeck || !formData.teamName || !formData.leaderName || !formData.phone || !formData.agree}
+                      // Disabled logic updated to remove pitchDeck check
+                      disabled={isSubmitting || !formData.teamName || !formData.leaderName || !formData.phone || !formData.agree}
                       className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black text-xl py-4 rounded-xl hover:shadow-2xl hover:shadow-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 active:scale-95"
                     >
                       {isSubmitting ? (
