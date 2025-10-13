@@ -1,7 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, Trophy, BookOpen, Users, Rocket, Award, CheckCircle, Star, Zap, Brain, Target, Send, Lightbulb, TrendingUp, Clock, Globe, FileText, UserCheck, DollarSign } from 'lucide-react';
+import { Sparkles, Trophy, BookOpen, Users, Rocket, Award, CheckCircle, Star, Zap, Brain, Target, Send, Lightbulb, TrendingUp, Clock, Globe, FileText, UserCheck, DollarSign, Upload, X } from 'lucide-react';
 import CircularText from '@/components/CircularText';
 import CountTimer from '@/components/CountTimer';
 
@@ -15,7 +15,7 @@ export default function AIHacksLanding() {
     phone: '',
     members: '',
     agree: false,
-    pitchDeck: null,
+    pitchDeck: null as File | null,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -24,6 +24,7 @@ export default function AIHacksLanding() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showEvaluation, setShowEvaluation] = useState(false);
   const [showObjWins, setShowObjWins] = useState(false);
+  const [fileName, setFileName] = useState('');
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
     const { name, value, type } = e.target;
@@ -31,6 +32,44 @@ export default function AIHacksLanding() {
     setFormData((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? (checked as boolean) : value,
+    }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Check file size (100MB = 104857600 bytes)
+      if (file.size > 104857600) {
+        setError('File size must be less than 100MB');
+        return;
+      }
+      
+      // Check file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        setError('Only PDF and PPT files are allowed');
+        return;
+      }
+      
+      setFileName(file.name);
+      setFormData((prev) => ({
+        ...prev,
+        pitchDeck: file,
+      }));
+      setError('');
+    }
+  };
+
+  const removeFile = (): void => {
+    setFileName('');
+    setFormData((prev) => ({
+      ...prev,
+      pitchDeck: null,
     }));
   };
 
@@ -47,7 +86,13 @@ export default function AIHacksLanding() {
     setIsSubmitting(true);
     setError('');
 
-    const data = formData as RegistrationFormValues;
+    if (!formData.pitchDeck) {
+      setError('Please upload your pitch deck');
+      setIsSubmitting(false);
+      return;
+    }
+
+    const data = formData as RegistrationFormValues & { pitchDeck: File | null };
 
     const googleFormData = new FormData();
     googleFormData.append('entry.2092238618', data.teamName);
@@ -71,6 +116,7 @@ export default function AIHacksLanding() {
         setShowForm(false);
         setSubmitted(false);
         setFormData({ teamName: '', leaderName: '', phone: '', members: '', agree: false, pitchDeck: null });
+        setFileName('');
       }, 4000);
     } catch (err) {
       console.error(err);
@@ -160,7 +206,7 @@ export default function AIHacksLanding() {
               </div>
               <p className="text-2xl text-cyan-400 font-bold flex items-center justify-center gap-2">
                 <Sparkles className="w-6 h-6" />
-                November 8–9, 2025 | Final Pitch: November 16
+                November 8–9, 2025
               </p>
               <p className="text-xl text-green-400 font-semibold">
                 Win Cash Prizes & Internships
@@ -280,27 +326,27 @@ export default function AIHacksLanding() {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => setShowObjWins(!showObjWins)}
-                  className="w-full p-8 text-left flex items-center justify-between group/btn"
+                  className="w-full p-6 md:p-8 text-left flex items-center justify-between group/btn"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3 md:gap-4">
                     <motion.div
                       animate={{ rotate: showObjWins ? 180 : 0 }}
                       transition={{ duration: 0.3 }}
-                      className="p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg shadow-orange-500/50 group-hover/btn:shadow-orange-400/70 transition-all"
+                      className="p-2 md:p-3 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg shadow-orange-500/50 group-hover/btn:shadow-orange-400/70 transition-all flex-shrink-0"
                     >
-                      <Lightbulb className="w-8 h-8 text-white" />
+                      <Lightbulb className="w-6 h-6 md:w-8 md:h-8 text-white" />
                     </motion.div>
-                    <div>
-                      <h3 className="text-3xl md:text-4xl font-black bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-2xl md:text-3xl lg:text-4xl font-black bg-gradient-to-r from-orange-400 via-red-400 to-pink-400 bg-clip-text text-transparent break-words">
                         What Wins: Impact Over Perfection
                       </h3>
-                      <p className="text-sm text-gray-400 mt-1">Tap to reveal the winning formula</p>
+                      <p className="text-xs md:text-sm text-gray-400 mt-1">Tap to reveal the winning formula</p>
                     </div>
                   </div>
                   <motion.div
                     animate={{ rotate: showObjWins ? 45 : 0 }}
                     transition={{ duration: 0.3 }}
-                    className="text-4xl font-black bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent"
+                    className="text-3xl md:text-4xl font-black bg-gradient-to-r from-orange-400 to-pink-400 bg-clip-text text-transparent ml-2 flex-shrink-0"
                   >
                     {showObjWins ? '−' : '+'}
                   </motion.div>
@@ -312,7 +358,7 @@ export default function AIHacksLanding() {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.4 }}
-                    className="px-8 pb-8 space-y-6"
+                    className="px-4 md:px-8 pb-6 md:pb-8 space-y-4 md:space-y-6"
                   >
                     <div className="h-px bg-gradient-to-r from-transparent via-orange-500/50 to-transparent"></div>
 
@@ -320,13 +366,13 @@ export default function AIHacksLanding() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.1 }}
-                      className="flex items-start gap-4"
+                      className="flex items-start gap-3 md:gap-4"
                     >
-                      <div className="p-2 bg-yellow-500/20 rounded-lg">
-                        <Star className="w-6 h-6 text-yellow-400" />
+                      <div className="p-2 bg-yellow-500/20 rounded-lg flex-shrink-0">
+                        <Star className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
                       </div>
-                      <div>
-                        <p className="text-xl text-gray-200 leading-relaxed">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-lg md:text-xl text-gray-200 leading-relaxed break-words">
                           We are looking for <span className="text-yellow-400 font-bold">big, disruptive ideas</span> that solve a painful problem for a large number of people.
                         </p>
                       </div>
@@ -336,9 +382,9 @@ export default function AIHacksLanding() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="p-6 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-2xl border border-orange-500/30"
+                      className="p-4 md:p-6 bg-gradient-to-r from-orange-500/10 to-red-500/10 rounded-2xl border border-orange-500/30"
                     >
-                      <p className="text-2xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent">
+                      <p className="text-xl md:text-2xl font-black bg-gradient-to-r from-orange-400 to-red-400 bg-clip-text text-transparent break-words">
                         A strong idea that is 10% built beats a weak idea that is 100% complete.
                       </p>
                     </motion.div>
@@ -347,13 +393,13 @@ export default function AIHacksLanding() {
                       initial={{ x: -20, opacity: 0 }}
                       animate={{ x: 0, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="flex items-start gap-4"
+                      className="flex items-start gap-3 md:gap-4"
                     >
-                      <div className="p-2 bg-cyan-500/20 rounded-lg">
-                        <Target className="w-6 h-6 text-cyan-400" />
+                      <div className="p-2 bg-cyan-500/20 rounded-lg flex-shrink-0">
+                        <Target className="w-5 h-5 md:w-6 md:h-6 text-cyan-400" />
                       </div>
-                      <div>
-                        <p className="text-xl text-gray-200 leading-relaxed">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-lg md:text-xl text-gray-200 leading-relaxed break-words">
                           Your project needs to be compelling, innovative, and show a deep understanding of how AI can solve the issue. <span className="text-cyan-400 font-bold">The pitch is the project.</span>
                         </p>
                       </div>
@@ -371,20 +417,20 @@ export default function AIHacksLanding() {
             initial={{ opacity: 0, y: 50 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="max-w-6xl mx-auto text-center bg-black/80 backdrop-blur-2xl p-16 rounded-3xl border-2 border-cyan-500/30 shadow-2xl"
+            className="max-w-6xl mx-auto text-center bg-black/80 backdrop-blur-2xl p-8 md:p-16 rounded-3xl border-2 border-cyan-500/30 shadow-2xl"
           >
-            <div className="flex items-center justify-center gap-4 mb-8">
-              <Brain className="w-16 h-16 text-cyan-400" />
-              <h2 className="text-5xl md:text-7xl font-black text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text">
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mb-8">
+              <Brain className="w-12 h-12 md:w-16 md:h-16 text-cyan-400 flex-shrink-0" />
+              <h2 className="text-4xl md:text-5xl lg:text-7xl font-black text-transparent bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 bg-clip-text break-words">
                 Kalam Vidya AI Judge
               </h2>
             </div>
 
-            <p className="text-xl md:text-2xl text-gray-200 mb-6 leading-relaxed">
+            <p className="text-lg md:text-xl lg:text-2xl text-gray-200 mb-6 leading-relaxed break-words">
               Revolutionary <span className="text-yellow-400 font-bold">Explainable AI Agent</span> evaluates your pitch in real-time during Google Meet sessions.
             </p>
 
-            <div className="grid md:grid-cols-3 gap-6 mt-12 mb-12">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mt-8 md:mt-12 mb-8 md:mb-12">
               {[
                 { icon: Users, text: 'AI Live Interaction' },
                 { icon: CheckCircle, text: 'Hybrid Evaluation' },
@@ -395,10 +441,10 @@ export default function AIHacksLanding() {
                   <motion.div
                     key={i}
                     whileHover={{ y: -10, scale: 1.05 }}
-                    className="p-8 bg-gradient-to-br from-purple-900/50 to-blue-900/50 rounded-2xl border border-purple-500/30 backdrop-blur-sm"
+                    className="p-6 md:p-8 bg-gradient-to-br from-purple-900/50 to-blue-900/50 rounded-2xl border border-purple-500/30 backdrop-blur-sm"
                   >
-                    <IconComponent className="w-10 h-10 mx-auto mb-4 text-cyan-400" />
-                    <p className="text-xl font-bold text-white">{feature.text}</p>
+                    <IconComponent className="w-8 h-8 md:w-10 md:h-10 mx-auto mb-4 text-cyan-400" />
+                    <p className="text-lg md:text-xl font-bold text-white break-words">{feature.text}</p>
                   </motion.div>
                 );
               })}
@@ -408,9 +454,9 @@ export default function AIHacksLanding() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setShowEvaluation(!showEvaluation)}
-              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-lg px-8 py-4 rounded-full shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 mx-auto active:scale-95"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold text-base md:text-lg px-6 md:px-8 py-3 md:py-4 rounded-full shadow-lg hover:shadow-purple-500/50 transition-all flex items-center gap-2 mx-auto active:scale-95"
             >
-              <FileText className="w-5 h-5" />
+              <FileText className="w-4 h-4 md:w-5 md:h-5" />
               {showEvaluation ? 'Hide Details' : 'How Evaluation Works'}
             </motion.button>
 
@@ -419,76 +465,76 @@ export default function AIHacksLanding() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mt-8 text-left space-y-6"
+                className="mt-6 md:mt-8 text-left space-y-4 md:space-y-6"
               >
-                <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-8 rounded-2xl border border-purple-500/20">
+                <div className="bg-gradient-to-br from-purple-900/30 to-blue-900/30 p-6 md:p-8 rounded-2xl border border-purple-500/20">
                   <div className="flex items-center gap-3 mb-4">
-                    <TrendingUp className="w-8 h-8 text-yellow-400" />
-                    <h3 className="text-3xl font-black text-yellow-400">The Selection Process</h3>
+                    <TrendingUp className="w-6 h-6 md:w-8 md:h-8 text-yellow-400 flex-shrink-0" />
+                    <h3 className="text-2xl md:text-3xl font-black text-yellow-400 break-words">The Selection Process</h3>
                   </div>
 
-                  <div className="space-y-6">
+                  <div className="space-y-4 md:space-y-6">
                     <div>
-                      <h4 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5" />
-                        AI Live Interaction (Online Round)
+                      <h4 className="text-lg md:text-xl font-bold text-cyan-400 mb-3 flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 flex-shrink-0 mt-1" />
+                        <span className="break-words">AI Live Interaction (Online Round)</span>
                       </h4>
-                      <p className="text-gray-300 leading-relaxed pl-7">
+                      <p className="text-sm md:text-base text-gray-300 leading-relaxed pl-0 md:pl-7 break-words">
                         The Kalam Vidya AI Agent joins your Google Meet session during the online pitch. It actively listens to your presentation, analyzes your pitch deck in real-time, and asks follow-up questions like a human venture capitalist using its vast database of startup success factors.
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5" />
-                        Hybrid Evaluation & Majority Weight
+                      <h4 className="text-lg md:text-xl font-bold text-cyan-400 mb-3 flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 flex-shrink-0 mt-1" />
+                        <span className="break-words">Hybrid Evaluation & Majority Weight</span>
                       </h4>
-                      <p className="text-gray-300 leading-relaxed pl-7">
+                      <p className="text-sm md:text-base text-gray-300 leading-relaxed pl-0 md:pl-7 break-words">
                         The AI's assessment combines with insights from two prominent human tech founders from India. The AI Agent holds the majority weight in the final decision, ensuring the process is data-driven and objective.
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-xl font-bold text-cyan-400 mb-3 flex items-center gap-2">
-                        <Trophy className="w-5 h-5" />
-                        Top 10 Teams Advance to Finals
+                      <h4 className="text-lg md:text-xl font-bold text-cyan-400 mb-3 flex items-start gap-2">
+                        <Trophy className="w-5 h-5 flex-shrink-0 mt-1" />
+                        <span className="break-words">Top 10 Teams Advance to Finals</span>
                       </h4>
-                      <p className="text-gray-300 leading-relaxed pl-7">
+                      <p className="text-sm md:text-base text-gray-300 leading-relaxed pl-0 md:pl-7 break-words">
                         The top <span className="text-yellow-400 font-bold">10 teams</span> selected by this revolutionary hybrid process will be invited to the high-stakes <span className="text-orange-400 font-bold">Offline Pitch (Round 2)</span> in Coimbatore on November 16, 2025.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-green-900/30 to-teal-900/30 p-8 rounded-2xl border border-green-500/20">
+                <div className="bg-gradient-to-br from-green-900/30 to-teal-900/30 p-6 md:p-8 rounded-2xl border border-green-500/20">
                   <div className="flex items-center gap-3 mb-4">
-                    <Award className="w-8 h-8 text-green-400" />
-                    <h3 className="text-3xl font-black text-green-400">Unprecedented Feedback Guarantee</h3>
+                    <Award className="w-6 h-6 md:w-8 md:h-8 text-green-400 flex-shrink-0" />
+                    <h3 className="text-2xl md:text-3xl font-black text-green-400 break-words">Unprecedented Feedback Guarantee</h3>
                   </div>
 
-                  <p className="text-gray-300 leading-relaxed mb-4">
+                  <p className="text-sm md:text-base text-gray-300 leading-relaxed mb-4 break-words">
                     Even if you don't make the finals, you'll leave with more valuable insights than any other hackathon:
                   </p>
 
                   <div className="space-y-4">
                     <div className="flex items-start gap-3">
                       <Star className="w-5 h-5 text-yellow-400 flex-shrink-0 mt-1" />
-                      <div>
-                        <p className="font-bold text-yellow-400">Explainable Results</p>
-                        <p className="text-gray-300">Every team receives explicit, personalized feedback explaining why their idea wasn't selected and why winning ideas were chosen.</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-yellow-400 break-words">Explainable Results</p>
+                        <p className="text-sm md:text-base text-gray-300 break-words">Every team receives explicit, personalized feedback explaining why their idea wasn't selected and why winning ideas were chosen.</p>
                       </div>
                     </div>
 
                     <div className="flex items-start gap-3">
                       <Zap className="w-5 h-5 text-orange-400 flex-shrink-0 mt-1" />
-                      <div>
-                        <p className="font-bold text-orange-400">Negotiation Opportunity</p>
-                        <p className="text-gray-300">Unique window to negotiate your score and feedback with organizers and the Kalam Vidya AI Agent itself! Challenge the assessment and gain valuable startup validation insights.</p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-orange-400 break-words">Negotiation Opportunity</p>
+                        <p className="text-sm md:text-base text-gray-300 break-words">Unique window to negotiate your score and feedback with organizers and the Kalam Vidya AI Agent itself! Challenge the assessment and gain valuable startup validation insights.</p>
                       </div>
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-400 italic mt-6 border-t border-green-500/20 pt-4">
+                  <p className="text-xs md:text-sm text-gray-400 italic mt-6 border-t border-green-500/20 pt-4 break-words">
                     This transparency guarantees your entry fee is an investment in unparalleled learning and actionable startup validation.
                   </p>
                 </div>
@@ -565,6 +611,53 @@ export default function AIHacksLanding() {
                 );
               })}
             </div>
+
+            {/* Internship Highlight Section */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              className="mt-16 relative overflow-hidden group"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/30 via-pink-600/30 to-orange-600/30 blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
+              <div className="relative p-8 md:p-12 bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-2xl rounded-3xl border-2 border-purple-500/40 group-hover:border-purple-400/60 text-center transition-all duration-300 shadow-2xl">
+                <div className="flex items-center justify-center gap-3 mb-6">
+                  <motion.div
+                    animate={{
+                      rotate: [0, 10, -10, 0],
+                      scale: [1, 1.1, 1]
+                    }}
+                    transition={{
+                      duration: 3,
+                      repeat: Infinity,
+                      ease: "easeInOut"
+                    }}
+                  >
+                    <Trophy className="w-12 h-12 text-yellow-400" />
+                  </motion.div>
+                  <h3 className="text-3xl md:text-5xl font-black bg-gradient-to-r from-yellow-400 via-orange-400 to-pink-400 bg-clip-text text-transparent">
+                    Internship Opportunities
+                  </h3>
+                </div>
+
+                <p className="text-xl md:text-2xl text-gray-200 leading-relaxed mb-6 max-w-4xl mx-auto">
+                  Top performers get <span className="text-yellow-400 font-bold">exclusive internship offers</span> from our sponsor PineSphere and partner companies!
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+                  <div className="p-6 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-2xl border border-purple-500/30">
+                    <DollarSign className="w-10 h-10 mx-auto mb-3 text-green-400" />
+                    <p className="text-lg font-bold text-white mb-2">Paid Internships</p>
+                    <p className="text-gray-300">Real-world projects with competitive compensation</p>
+                  </div>
+                  <div className="p-6 bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-2xl border border-orange-500/30">
+                    <Rocket className="w-10 h-10 mx-auto mb-3 text-orange-400" />
+                    <p className="text-lg font-bold text-white mb-2">Career Fast-Track</p>
+                    <p className="text-gray-300">Direct path to full-time opportunities</p>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         </section>
 
@@ -779,7 +872,7 @@ export default function AIHacksLanding() {
               { q: 'Do I need to know coding?', a: 'Not at all. This focuses on creativity and using AI tools, not programming.' },
               { q: 'Can I participate solo?', a: 'Yes! Individuals and teams (2–5 members) are welcome.' },
               { q: 'What is the judging process?', a: 'Hybrid model using Kalam Vidya AI Judge and expert mentors for fairness.' },
-              { q: 'Is it online or offline?', a: 'Round 1 is online (Nov 8–9). Round 2 is offline final pitch (Nov 16) in Coimbatore.' },
+              { q: 'Is it online or offline?', a: 'Round 1 is online (Nov 8–9). Top 10 teams advance to Round 2: offline final pitch (Nov 16) in Coimbatore.' },
               { q: 'Why should I pay entry fee?', a: 'Get ₹10,000 learning kit, live mentorship, and chance to win prizes many times the entry fee.' }
             ].map((faq, i) => (
               <motion.div
@@ -805,7 +898,7 @@ export default function AIHacksLanding() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="fixed inset-0 z-50 bg-black/98 backdrop-blur-xl overflow-y-auto flex items-center justify-center"
+            className="fixed inset-0 z-50 bg-black/98 backdrop-blur-xl overflow-y-auto flex items-center justify-center p-4"
             onClick={() => !submitted && setShowForm(false)}
           >
             <div className="absolute inset-0 -z-10">
@@ -836,11 +929,11 @@ export default function AIHacksLanding() {
                 initial={{ scale: 0.8, y: 50 }}
                 animate={{ scale: 1, y: 0 }}
                 onClick={(e) => e.stopPropagation()}
-                className="relative max-w-xl w-full max-h-[90vh] overflow-y-auto scrollbar-hide bg-gradient-to-br from-gray-900/95 to-black/95 border-2 border-cyan-500/30 rounded-3xl p-6 md:p-8 shadow-2xl backdrop-blur-sm"
+                className="relative max-w-lg w-full max-h-[90vh] overflow-y-auto scrollbar-hide bg-gradient-to-br from-gray-900/95 to-black/95 border-2 border-cyan-500/30 rounded-3xl p-4 md:p-6 shadow-2xl backdrop-blur-sm"
               >
                 <button
                   onClick={() => setShowForm(false)}
-                  className="absolute top-6 right-6 text-white text-3xl hover:text-red-500 transition-colors z-10"
+                  className="absolute top-4 right-4 md:top-6 md:right-6 text-white text-3xl hover:text-red-500 transition-colors z-10"
                 >
                   ×
                 </button>
@@ -850,7 +943,7 @@ export default function AIHacksLanding() {
                     <CheckCircle className="w-24 h-24 mx-auto mb-6 text-green-400" />
                     <h2 className="text-4xl font-black text-green-400 mb-4">SUCCESS!</h2>
                     <p className="text-xl text-gray-300">Your registration has been submitted.</p>
-                    <p className="text-gray-400 mt-4">Check your email for pitch deck submission instructions.</p>
+                    <p className="text-gray-400 mt-4">Check your email for confirmation and next steps.</p>
                   </div>
                 ) : (
                   <div className="space-y-6">
@@ -908,14 +1001,50 @@ export default function AIHacksLanding() {
                       />
                     </div>
 
-                    <div className="bg-yellow-900/30 border-l-4 border-yellow-500 p-4 rounded-lg flex items-start gap-3">
-                      <BookOpen className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-1" />
-                      <div>
-                        <p className="font-bold text-yellow-400">Pitch Deck Submission</p>
-                        <p className="text-sm text-gray-300 mt-2">
-                          You'll receive a separate email link to upload your pitch deck after registration.
-                        </p>
-                      </div>
+                    {/* File Upload Section */}
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-300 mb-2">
+                        Upload Your Pitch Deck (PDF or PPT, Max 100MB) *
+                      </label>
+                      
+                      {!fileName ? (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept=".pdf,.ppt,.pptx"
+                            onChange={handleFileChange}
+                            className="hidden"
+                            id="pitchDeckUpload"
+                          />
+                          <label
+                            htmlFor="pitchDeckUpload"
+                            className="flex items-center justify-center gap-3 w-full p-6 bg-gray-800/50 border-2 border-dashed border-gray-700 rounded-xl hover:border-cyan-500 hover:bg-gray-800/70 transition-all cursor-pointer group"
+                          >
+                            <Upload className="w-6 h-6 text-cyan-400 group-hover:scale-110 transition-transform" />
+                            <span className="text-gray-300 group-hover:text-cyan-400 transition-colors">
+                              Click to upload your pitch deck
+                            </span>
+                          </label>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between p-4 bg-green-900/20 border-2 border-green-500/30 rounded-xl">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
+                            <FileText className="w-6 h-6 text-green-400 flex-shrink-0" />
+                            <span className="text-green-400 font-semibold truncate">{fileName}</span>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={removeFile}
+                            className="ml-2 p-2 hover:bg-red-500/20 rounded-lg transition-colors flex-shrink-0"
+                          >
+                            <X className="w-5 h-5 text-red-400" />
+                          </button>
+                        </div>
+                      )}
+
+                      <p className="text-xs text-gray-400 mt-2">
+                        Must include: Problem, Solution, Market Gap, Revenue Strategy, Target Customers
+                      </p>
                     </div>
 
                     <div className="flex items-start gap-3">
@@ -926,7 +1055,7 @@ export default function AIHacksLanding() {
                         checked={formData.agree}
                         onChange={handleChange}
                         required
-                        className="mt-1 h-5 w-5 text-cyan-500 rounded cursor-pointer"
+                        className="mt-1 h-5 w-5 text-cyan-500 rounded cursor-pointer flex-shrink-0"
                       />
                       <label htmlFor="agree" className="text-sm text-gray-300 cursor-pointer">
                         I agree to share my data for event communication & participation certificate delivery. *
@@ -935,8 +1064,9 @@ export default function AIHacksLanding() {
 
                     <button
                       onClick={handleSubmit}
-                      disabled={isSubmitting}
-                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black text-xl py-4 rounded-xl hover:shadow-2xl hover:shadow-yellow-500/50 disabled:opacity-50 transition-all flex items-center justify-center gap-3 active:scale-95"
+                      // ...code continues from the disabled prop of the button
+                      disabled={isSubmitting || !formData.pitchDeck || !formData.teamName || !formData.leaderName || !formData.phone || !formData.agree}
+                      className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black text-xl py-4 rounded-xl hover:shadow-2xl hover:shadow-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 active:scale-95"
                     >
                       {isSubmitting ? (
                         <>
@@ -990,7 +1120,7 @@ export default function AIHacksLanding() {
                     whileHover={{ scale: 1.05, y: -5 }}
                     className="p-6 bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-2xl border border-cyan-500/30 hover:border-cyan-400/50 transition-all"
                   >
-                    <div className="text-cyan-400 font-bold text-lg mb-2">Elon</div>
+                    <div className="text-cyan-400 font-bold text-lg mb-2">Selvan</div>
                     <div className="text-white text-lg">+91 9361802547</div>
                   </motion.a>
 
@@ -999,7 +1129,7 @@ export default function AIHacksLanding() {
                     whileHover={{ scale: 1.05, y: -5 }}
                     className="p-6 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-2xl border border-purple-500/30 hover:border-purple-400/50 transition-all"
                   >
-                    <div className="text-pink-400 font-bold text-lg mb-2">Geoffrey</div>
+                    <div className="text-pink-400 font-bold text-lg mb-2">Mugesh</div>
                     <div className="text-white text-lg">+91 6385329845</div>
                   </motion.a>
 
@@ -1008,7 +1138,7 @@ export default function AIHacksLanding() {
                     whileHover={{ scale: 1.05, y: -5 }}
                     className="p-6 bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-2xl border border-orange-500/30 hover:border-orange-400/50 transition-all"
                   >
-                    <div className="text-orange-400 font-bold text-lg mb-2">Alan Turing</div>
+                    <div className="text-orange-400 font-bold text-lg mb-2">Raj</div>
                     <div className="text-white text-lg">+91 9443884738</div>
                   </motion.a>
                 </div>
