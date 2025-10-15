@@ -9,7 +9,6 @@ export default function AIHacksLanding() {
   const { scrollYProgress } = useScroll();
   const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
 
-  // Removed pitchDeck from the form state
   const [formData, setFormData] = useState({
     teamName: '',
     leaderName: '',
@@ -33,8 +32,6 @@ export default function AIHacksLanding() {
     }));
   };
 
-  // Removed handleFileChange and removeFile functions
-
   interface RegistrationFormValues {
     teamName: string;
     leaderName: string;
@@ -47,8 +44,6 @@ export default function AIHacksLanding() {
     e.preventDefault();
     setIsSubmitting(true);
     setError('');
-
-    // Removed the check for formData.pitchDeck
 
     const data = formData as RegistrationFormValues;
 
@@ -73,7 +68,6 @@ export default function AIHacksLanding() {
       setTimeout(() => {
         setShowForm(false);
         setSubmitted(false);
-        // Removed pitchDeck from the reset logic
         setFormData({ teamName: '', leaderName: '', phone: '', members: '', agree: false });
       }, 4000);
     } catch (err) {
@@ -94,6 +88,7 @@ export default function AIHacksLanding() {
           loop
           muted
           playsInline
+          poster="/images/Background_Poster.jpg" // Poster image for instant load
           className="hidden md:block w-full h-full object-cover"
         >
           <source src="/animations/Background.mp4" type="video/mp4" />
@@ -104,6 +99,7 @@ export default function AIHacksLanding() {
           loop
           muted
           playsInline
+          poster="/images/Mobile_Poster.jpg" // Poster image for instant load
           className="block md:hidden w-full h-full object-cover"
         >
           <source src="/animations/MobileBackgorund.mp4" type="video/mp4" />
@@ -166,7 +162,6 @@ export default function AIHacksLanding() {
                 <Sparkles className="w-6 h-6" />
                 November 8–9, 2025
               </p>
-              {/* Highlighted "Win Cash Prizes & Internships" */}
               <motion.p
                 animate={{
                   textShadow: [
@@ -282,7 +277,7 @@ export default function AIHacksLanding() {
               })}
             </div>
 
-            {/* Updated "What Wins" Section with onClick */}
+            {/* "What Wins" Section - Mobile Friendly onClick */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -419,7 +414,7 @@ export default function AIHacksLanding() {
               })}
             </div>
 
-            {/* Updated "How Evaluation Works" button with onClick */}
+            {/* "How Evaluation Works" button - Mobile Friendly onClick */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -513,7 +508,7 @@ export default function AIHacksLanding() {
           </motion.div>
         </section>
 
-        {/* Updated Prizes & Benefits Section */}
+        {/* Prizes & Benefits Section */}
         <section className="relative py-32 px-6 bg-gradient-to-b from-transparent via-indigo-900/20 to-transparent">
           <motion.div
             initial={{ opacity: 0 }}
@@ -541,12 +536,12 @@ export default function AIHacksLanding() {
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {[
-                { icon: BookOpen, text: 'Free AI Learning Kit ₹10,000', color: 'from-red-500 to-pink-500', glow: 'red' },
-                { icon: Sparkles, text: 'Startup Resource Repository', color: 'from-yellow-500 to-orange-500', glow: 'yellow' },
-                { icon: Award, text: 'Participation Certificate', color: 'from-green-500 to-teal-500', glow: 'green' },
-                { icon: Users, text: 'Live AI Workshop', color: 'from-cyan-500 to-blue-500', glow: 'cyan' },
-                { icon: Trophy, text: 'Cash Prizes & Internships', color: 'from-purple-500 to-pink-500', glow: 'purple' },
-                { icon: Rocket, text: 'Career Launchpad', color: 'from-indigo-500 to-purple-600', glow: 'indigo' }
+                { icon: BookOpen, text: 'Free AI Learning Kit ₹10,000', color: 'from-red-500 to-pink-500' },
+                { icon: Sparkles, text: 'Startup Resource Repository', color: 'from-yellow-500 to-orange-500' },
+                { icon: Award, text: 'Participation Certificate', color: 'from-green-500 to-teal-500' },
+                { icon: Users, text: 'Live AI Workshop', color: 'from-cyan-500 to-blue-500' },
+                { icon: Trophy, text: 'Cash Prizes & Internships', color: 'from-purple-500 to-pink-500' },
+                { icon: Rocket, text: 'Career Launchpad', color: 'from-indigo-500 to-purple-600' }
               ].map((item, i) => {
                 const IconComponent = item.icon;
                 return (
@@ -563,14 +558,8 @@ export default function AIHacksLanding() {
                     <div className={`absolute inset-0 bg-gradient-to-br ${item.color} opacity-20 group-hover:opacity-30 rounded-3xl blur-xl transition-all duration-300`}></div>
                     <div className={`relative p-10 bg-gradient-to-br ${item.color} rounded-3xl shadow-2xl text-center transform transition-all duration-300 border-2 border-white/10 group-hover:border-white/30`}>
                       <motion.div
-                        animate={{
-                          rotate: [0, 5, -5, 0],
-                        }}
-                        transition={{
-                          duration: 2,
-                          repeat: Infinity,
-                          ease: "easeInOut"
-                        }}
+                        animate={{ rotate: [0, 5, -5, 0] }}
+                        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                       >
                         <IconComponent className="w-16 h-16 mx-auto mb-4 text-white drop-shadow-lg" strokeWidth={2} />
                       </motion.div>
@@ -593,15 +582,8 @@ export default function AIHacksLanding() {
               <div className="relative p-8 md:p-12 bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-2xl rounded-3xl border-2 border-purple-500/40 group-hover:border-purple-400/60 text-center transition-all duration-300 shadow-2xl">
                 <div className="flex items-center justify-center gap-3 mb-6">
                   <motion.div
-                    animate={{
-                      rotate: [0, 10, -10, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <Trophy className="w-12 h-12 text-yellow-400" />
                   </motion.div>
@@ -663,7 +645,7 @@ export default function AIHacksLanding() {
           </div>
         </section>
 
-        {/* Updated Objections Section */}
+        {/* Objections Section */}
         <section className="relative py-32 px-6 bg-gradient-to-b from-transparent via-red-900/10 to-transparent">
           <motion.div
             initial={{ opacity: 0 }}
@@ -768,7 +750,7 @@ export default function AIHacksLanding() {
               ))}
             </div>
 
-            {/* Updated Bottom Line Card */}
+            {/* Bottom Line Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
@@ -779,15 +761,8 @@ export default function AIHacksLanding() {
               <div className="relative p-10 md:p-12 bg-gradient-to-br from-gray-900/95 to-black/95 backdrop-blur-2xl rounded-3xl border-2 border-yellow-500/40 group-hover:border-yellow-400/60 text-center transition-all duration-300 shadow-2xl">
                 <div className="flex items-center justify-center gap-3 mb-6">
                   <motion.div
-                    animate={{
-                      rotate: [0, 10, -10, 0],
-                      scale: [1, 1.1, 1]
-                    }}
-                    transition={{
-                      duration: 3,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    animate={{ rotate: [0, 10, -10, 0], scale: [1, 1.1, 1] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <Target className="w-12 h-12 text-yellow-400" />
                   </motion.div>
@@ -813,14 +788,8 @@ export default function AIHacksLanding() {
                   className="bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black text-2xl px-14 py-6 rounded-full shadow-2xl hover:shadow-yellow-500/50 transition-all flex items-center gap-3 mx-auto group/btn active:scale-95"
                 >
                   <motion.div
-                    animate={{
-                      x: [0, 5, 0]
-                    }}
-                    transition={{
-                      duration: 1.5,
-                      repeat: Infinity,
-                      ease: "easeInOut"
-                    }}
+                    animate={{ x: [0, 5, 0] }}
+                    transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
                   >
                     <Rocket className="w-7 h-7 group-hover/btn:rotate-12 transition-transform" />
                   </motion.div>
@@ -878,6 +847,7 @@ export default function AIHacksLanding() {
                 loop
                 muted
                 playsInline
+                poster="/images/register-poster-desktop.jpg" // Poster for instant load
                 className="hidden md:block w-full h-full object-cover"
               >
                 <source src="/animations/register-page.mp4" type="video/mp4" />
@@ -888,6 +858,7 @@ export default function AIHacksLanding() {
                 loop
                 muted
                 playsInline
+                poster="/images/register-poster-mobile.jpg" // Poster for instant load
                 className="block md:hidden w-full h-full object-cover"
               >
                 <source src="/animations/MobileRegister.mp4" type="video/mp4" />
@@ -971,8 +942,6 @@ export default function AIHacksLanding() {
                       />
                     </div>
 
-                    {/* File Upload Section has been removed */}
-
                     <div className="flex items-start gap-3">
                       <input
                         type="checkbox"
@@ -990,7 +959,6 @@ export default function AIHacksLanding() {
 
                     <button
                       onClick={handleSubmit}
-                      // Disabled logic updated to remove pitchDeck check
                       disabled={isSubmitting || !formData.teamName || !formData.leaderName || !formData.phone || !formData.agree}
                       className="w-full bg-gradient-to-r from-yellow-500 to-orange-600 text-black font-black text-xl py-4 rounded-xl hover:shadow-2xl hover:shadow-yellow-500/50 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 active:scale-95"
                     >
