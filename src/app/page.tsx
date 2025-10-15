@@ -166,9 +166,20 @@ export default function AIHacksLanding() {
                 <Sparkles className="w-6 h-6" />
                 November 8–9, 2025
               </p>
-              <p className="text-xl text-green-400 font-semibold">
+              {/* Highlighted "Win Cash Prizes & Internships" */}
+              <motion.p
+                animate={{
+                  textShadow: [
+                    '0 0 15px rgba(52, 211, 153, 0.7)',
+                    '0 0 40px rgba(52, 211, 153, 1)',
+                    '0 0 15px rgba(52, 211, 153, 0.7)'
+                  ]
+                }}
+                transition={{ duration: 2.5, repeat: Infinity }}
+                className="text-2xl md:text-3xl text-green-300 font-black"
+              >
                 Win Cash Prizes & Internships
-              </p>
+              </motion.p>
             </div>
 
             <motion.button
@@ -271,7 +282,7 @@ export default function AIHacksLanding() {
               })}
             </div>
 
-            {/* Updated "What Wins" Section */}
+            {/* Updated "What Wins" Section with onClick */}
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -408,6 +419,7 @@ export default function AIHacksLanding() {
               })}
             </div>
 
+            {/* Updated "How Evaluation Works" button with onClick */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -458,7 +470,7 @@ export default function AIHacksLanding() {
                         <span className="break-words">Top 10 Teams Advance to Finals</span>
                       </h4>
                       <p className="text-sm md:text-base text-gray-300 leading-relaxed pl-0 md:pl-7 break-words">
-                        The top <span className="text-yellow-400 font-bold">10 teams</span> selected by this revolutionary hybrid process will be invited to the high-stakes <span className="text-orange-400 font-bold">Offline Pitch (Round 2)</span> in Coimbatore on November 16, 2025.
+                        The top <span className="text-yellow-400 font-bold">10 teams</span> selected by this revolutionary hybrid process will be invited to the high-stakes <span className="text-orange-400 font-bold">Offline Pitch (Round 2)</span> in Coimbatore on <span className="text-cyan-400 font-bold">Date to be announced</span>.
                       </p>
                     </div>
                   </div>
@@ -830,7 +842,7 @@ export default function AIHacksLanding() {
               { q: 'Do I need to know coding?', a: 'Not at all. This focuses on creativity and using AI tools, not programming.' },
               { q: 'Can I participate solo?', a: 'Yes! Individuals and teams (2–5 members) are welcome.' },
               { q: 'What is the judging process?', a: 'Hybrid model using Kalam Vidya AI Judge and expert mentors for fairness.' },
-              { q: 'Is it online or offline?', a: 'Round 1 is online (Nov 8–9). Top 10 teams advance to Round 2: offline final pitch (Nov 16) in Coimbatore.' },
+              { q: 'Is it online or offline?', a: 'Round 1 is online (Nov 8–9). Top 10 teams advance to Round 2: offline final pitch (Date to be announced) in Coimbatore.' },
               { q: 'Why should I pay entry fee?', a: 'Get ₹10,000 learning kit, live mentorship, and chance to win prizes many times the entry fee.' }
             ].map((faq, i) => (
               <motion.div
@@ -1059,7 +1071,7 @@ export default function AIHacksLanding() {
 
                 <div className="pt-6 border-t border-gray-700 mt-8">
                   <p className="text-gray-400 text-lg">
-                    Email: <a href="mailto:automateeverythingofficial@gmail.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">automateeverythingofficial@gmail.com</a>
+                    Email: <a href="mailto:ssakthitselvan7@gmail.com" className="text-cyan-400 hover:text-cyan-300 transition-colors">ssakthitselvan7@gmail.com</a>
                   </p>
                 </div>
               </div>
